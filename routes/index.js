@@ -1,9 +1,10 @@
 'use strict';
 
 class RouterBuilder {
-    build(app) {
-        app.use('/tickets', require('./ticket'));
-        app.use('/attraction',require('./attraction'));
+    build(app) {  
+        app.use('/user',require('./user.route'));  
+        app.use('/auth',require('./auth.route'));
+        app.use('/attraction',require('./attraction.route'));  
     }
 }
 

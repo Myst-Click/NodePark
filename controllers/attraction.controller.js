@@ -1,36 +1,50 @@
-'use strict';
+'use strict'
+var fs = require('file-system');
+var jwt = require('jsonwebtoken');
+const Attraction = require('../models').Attraction;
+const User = require('../models').User;
 
-const models = require('../models');
-const sequelize = models.sequelize;
-const Attraction = models.Attraction;
+class AttractionController{
 
-class AttractionController {
+        async listOpenAttraction(){
 
-    async addAttraction(name,description,image,type,
-                    capacite,duree,horaire,acces_handicape,
-                acces_adultes,in_maintenance) {
-        return Attraction.create({
-           name,
-           description,
-           image,
-           type,
-           capacite,
-           duree,
-           horaire,
-           acces_handicape,
-           acces_adultes,
-           in_maintenance
+          await Attraction.find({
+            maintenance : false
+     }, function(err,result){
+        return result;
+         
+     })}
+    
+        // var query = Attraction.findOne({
+         
+        //     maintenance : false
+            
+        // })
+        // query.exec(function(err,result){
+        //     return result;
+        // })}
+        
+        
+
+    async createAttraction(name,description,image,type,capacite,duree,horaire,acces_handicape,acces_w_adultes,maintenance){
+        var newAttraction = new Attraction({
+            name:name,
+            description: description,
+            images: image,
+            type: type,
+            capacite: capacite,
+            duree: duree,
+            horaire: horaire,
+            acces_handicape: acces_handicape,
+            acces_w_adultes: acces_w_adultes,
+            maintenance: maintenance
         });
-    }
 
-    async getAttractionById(id) {
-        return Attraction.findOne({
-            where: {
-                id: id
-            }
+        newAttraction.save(function(err){
+            if(err) throw err;
         });
-    }
 
+        return newAttraction;
+    }
 }
-
 module.exports = new AttractionController();

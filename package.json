@@ -1,22 +1,22 @@
 {
-  "name": "nodepark",
+  "name": "project",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
-    "start" : "node index.js",
-    "dev": "nodemon index.js",
+    "dev": "nodemon server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "dotenv": "^7.0.0",
+    "bcryptjs": "^2.4.3",
+    "body-parser": "^1.18.3",
     "express": "^4.16.4",
+    "file-system": "^2.2.2",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^5.4.19",
     "morgan": "^1.9.1",
-    "mysql2": "^1.6.5",
-    "nodemon": "^1.18.10",
-    "sequelize": "^5.1.0",
-    "sequelize-cli": "^5.4.0"
+    "nodemon": "^1.18.10"
   }
 }
