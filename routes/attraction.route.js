@@ -82,10 +82,41 @@ router.post('/new', async(req, res)=>{
   
    });
 
-   router.get('/available',async(req,res)=>{
-     const p =  await AttractionController.listOpenAttraction();
-     res.json(Promise.resolve(p));
-     AttractionController.listOpenAttraction().then(console.log);
+   router.get('/available/:id',async(req,res)=>{
+
+     const user = await UserController.getById(req.params.id);
+     if(user.level === 1){
+     const p = await AttractionController.listOpenAttraction();
+     res.json(p);
+     }
+     else{
+       res.sendStatus(403);
+     }
    })
+
+   router.post('/available/:id/:idAttraction',async(req,res)=>{
+
+    const user = await UserController.getById(req.params.id);
+     if(user.level === 1){
+     const p = await AttractionController.sendAvailable(req.params.idAttraction);
+     res.json(p);
+     }
+     else{
+       res.sendStatus(403);
+     }
+   })
+
+   router.post('/maintenance/:id/:idAttraction',async(req,res)=>{
+
+    const user = await UserController.getById(req.params.id);
+     if(user.level === 1){
+     const p = await AttractionController.sendMaintenance(req.params.idAttraction);
+     res.json(p);
+     }
+     else{
+       res.sendStatus(403);
+     }
+   })
+
 
    module.exports = router;

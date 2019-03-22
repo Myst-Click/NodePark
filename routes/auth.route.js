@@ -14,32 +14,16 @@ const UserController = require('../controllers/user.controller')
 
 // CREATES A NEW USER
 router.post('/signin', async(req, res)=>{
-    const name = req.body.name;
-    const typeName = typeof name;
-    const password = req.body.password;
-    const typePass = typeof password;
-    const mail = req.body.email;
-    const typeMail = typeof mail;
-    const level = req.body.level;
-    const typeLevel = typeof level;
-
-    if (typePass !== "string" 
-        ||typeName !== "string"
-        ||typeMail !== "string"
-        ||typeLevel !== "number")return res.sendStatus(415).end();
-    if(mail === undefined 
-        || name === undefined 
-        || password === undefined 
-        || level === undefined 
-        || level > 4) return res.sendStatus(400).end();
+    const result = await UserController.availableValues(req.body.name,req.body.email,req.body.password,req.body.level)
+    if(!result)return res.sendStatus(400).end();
     
     User.findOne({
             email : mail
      },function(err,result){
         if(result) res.sendStatus(403).end();
         else{
-            const cryptedPassword = bcrypt.hashSync(password,5);
-            const p = UserController.createUser(name,cryptedPassword,mail,level); 
+            const cryptedPassword = bcrypt.hashSync(req.body.password,5);
+            const p = UserController.createUser(req.body.name,cryptedPassword,req.body.mail,req.body.level); 
               if(p === undefined) res.send(400).end();
               else res.sendStatus(201).end();
         }

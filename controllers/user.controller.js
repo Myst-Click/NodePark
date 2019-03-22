@@ -19,5 +19,30 @@ class UserController{
 
         return newUser;
     }
+
+    async availableValues(name,mail,password,level){
+    const typeName = typeof name;
+    const typePass = typeof password;
+    const typeMail = typeof mail;
+    const typeLevel = typeof level;
+
+    if (typePass !== "string" 
+        ||typeName !== "string"
+        ||typeMail !== "string"
+        ||typeLevel !== "number") return false;
+
+    if(mail === undefined 
+        || name === undefined 
+        || password === undefined 
+        || level === undefined 
+        || level > 2) return false;
+
+    return true;
+    }
+    async getById(id){
+        return  User.findOne({
+            _id : id
+        });
+    };
 }
 module.exports = new UserController();
