@@ -15,6 +15,12 @@ module.exports = mongoose.model('User', new Schema({
              required : true,
         },
   level:{ type : 'Number',
-          requied : true,
-        }
+          required : true,
+        },
+  pass:{ type : String,
+          required : false,
+      },
+  lastUsePass:{type: String,
+            required : false,
+      }
 }));

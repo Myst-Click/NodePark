@@ -34,6 +34,9 @@ module.exports = mongoose.model('Attraction', new Schema({
         },
   maintenance:{ type : Boolean,
       required : true
-      }
+      },
+  last_maintenance:{ type : String,
+      required : true}
+
 
 }));

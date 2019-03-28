@@ -1,16 +1,19 @@
 'use strict'
-var fs = require('file-system');
-var jwt = require('jsonwebtoken');
+
+const datetime =require('node-datetime')
 const User = require('../models/User');
+const nameDay = require('../models/nameDay');
 
 class UserController{
 
-    async createUser(name,password,email,level){
+    async createUser(name,password,email,level,pass){
         var newUser = new User({
             name:name,
             password: password,
             email: email,
-            level: level
+            level: level,
+            pass: pass,
+            lastUsePass: "null"
         });
 
         newUser.save(function(err){
@@ -20,10 +23,10 @@ class UserController{
         return newUser;
     }
 
-    async availableValues(name,mail,password,level){
+    async availableValues(name,email,password,level,pass){
     const typeName = typeof name;
     const typePass = typeof password;
-    const typeMail = typeof mail;
+    const typeMail = typeof email;
     const typeLevel = typeof level;
 
     if (typePass !== "string" 
@@ -31,11 +34,15 @@ class UserController{
         ||typeMail !== "string"
         ||typeLevel !== "number") return false;
 
-    if(mail === undefined 
+    if(email === undefined 
         || name === undefined 
         || password === undefined 
         || level === undefined 
         || level > 2) return false;
+
+    if(pass != undefined){
+        if(pass != "journee" && pass !="week-end" && pass !="1daymonth" && pass != "annuel" && pass != "escape-game") return false;
+    }
 
     return true;
     }
@@ -44,5 +51,65 @@ class UserController{
             _id : id
         });
     };
+    async isAccess(user){
+        if(user.level === 1)return true;
+        if(user.lastUsePass === "null"){
+            const date =  Date.now();
+            var dateNow = datetime.create(date)
+            const formatedDate = dateNow.format('d/m/Y');
+            user.lastUsePass = formatedDate;
+            user.save(function(err){
+              if(err) throw err;
+          });
+          return true;
+          }
+          else{
+            if(user.pass === "journee"){
+                    const date =  Date.now();
+                    var dateNow = datetime.create(date)
+                    const formatedDate = dateNow.format('d/m/Y');
+                    if(formatedDate != user.lastUsePass){
+                      return false;
+                    } 
+                    return true ;
+            }
+            if(user.pass ==="1daymonth"){
+                    const lastusepass = user.lastUsePass;
+                    const lastMonthUse = lastusepass.substr(3,2);
+                    const date =  Date.now();
+                    var dateNow = datetime.create(date)
+                    const formatedDate = dateNow.format('d/m/Y');
+                    const MonthDate = dateNow.format('m');
+                    if(MonthDate == lastMonthUse){
+                      return false;
+                    }
+                    else{
+                      user.lastUsePass = formatedDate;
+                      user.save(function(err){
+                       if(err) throw err;
+                      });
+                      return true;
+                    }
+            }
+            if(user.pass === "week-end"){
+                    var datenow = new Date(Date.now());
+                    var actualDay = datenow.getDay();
+                    const actualNameDay = nameDay[actualDay];
+                    if(actualNameDay == "Samedi" || actualNameDay == "Dimanche"){
+                      const date =  Date.now();
+                      var dateNow = datetime.create(date)
+                      const formatedDate = dateNow.format('d/m/Y');
+                      user.lastUsePass = formatedDate;
+                      user.save(function(err){
+                        if(err) throw err;
+                      });
+                      return true;   
+                    }
+                    else{
+                      return false;
+                    }
+            }
+        }
+    }
 }
 module.exports = new UserController();

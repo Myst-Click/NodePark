@@ -1,8 +1,7 @@
 'use strict'
-var fs = require('file-system');
-var jwt = require('jsonwebtoken');
+
 const Attraction = require('../models').Attraction;
-const User = require('../models').User;
+const datetime = require('node-datetime')
 
 class AttractionController{
 
@@ -11,7 +10,47 @@ class AttractionController{
             maintenance : false
             });
         }
+        async listMaintenanceAttraction(){
+            return await Attraction.find({
+                maintenance : true
+            });
+        }
+        availableValue(name,description,images,type,duree,capacite,horaire,
+                        acces_handicape,acces_w_adultes,maintenance){
+                            const typeName = typeof name;
+                            const typeDescription = typeof description;
+                            const typeImage = typeof images;
+                            const typeType = typeof type;
+                            const typeDuree = typeof duree;
+                            const typeCapacite = typeof capacite;
+                            const typeHoraire = typeof horaire;
+                            const typeHandicap = typeof acces_handicape;
+                            const typeAdultes = typeof acces_w_adultes;
+                            const typeMaintenance = typeof maintenance;
 
+                            if (typeName !== "string" 
+                            ||typeDescription !== "string"
+                            ||typeImage !== "string"
+                            ||typeType !== "string"
+                            ||typeDuree !== "string"
+                            ||typeCapacite !== "number"
+                            ||typeHoraire !== "string"
+                            ||typeHandicap !== "boolean"
+                            ||typeAdultes !== "boolean"
+                            ||typeMaintenance !== "boolean") return false;
+
+                            if(name === undefined 
+                                || description === undefined 
+                                || images === undefined 
+                                || type === undefined 
+                                || capacite === undefined 
+                                || horaire === undefined 
+                                || duree === undefined 
+                                || acces_handicape === undefined 
+                                || acces_w_adultes === undefined 
+                                || maintenance === undefined ) return false
+            return true;
+        }
         async sendMaintenance(id){
            var attraction = await Attraction.findOne({
                 _id : id
@@ -22,6 +61,10 @@ class AttractionController{
             }
             else{
                 attraction.maintenance = true;
+                const date =  Date.now();
+                var dateNow = datetime.create(date)
+                const formatedDate = dateNow.format('d/m/Y');
+                attraction.last_maintenance = formatedDate;
                 attraction.save(function(err){
                     if(err) throw err;
                 });
@@ -29,8 +72,6 @@ class AttractionController{
                 return p;
             }
         }
-    
-
         async sendAvailable(id){
             var attraction = await Attraction.findOne({
                  _id : id
@@ -48,19 +89,7 @@ class AttractionController{
                  return p;
              }
          }
-
-        // var query = Attraction.findOne({
-         
-        //     maintenance : false
-            
-        // })
-        // query.exec(function(err,result){
-        //     return result;
-        // })}
-        
-        
-
-    async createAttraction(name,description,image,type,capacite,duree,horaire,acces_handicape,acces_w_adultes,maintenance){
+        async createAttraction(name,description,image,type,capacite,duree,horaire,acces_handicape,acces_w_adultes,maintenance){
         var newAttraction = new Attraction({
             name:name,
             description: description,
@@ -71,7 +100,8 @@ class AttractionController{
             horaire: horaire,
             acces_handicape: acces_handicape,
             acces_w_adultes: acces_w_adultes,
-            maintenance: maintenance
+            maintenance: maintenance,
+            last_maintenance : "null"
         });
 
         newAttraction.save(function(err){
@@ -79,6 +109,11 @@ class AttractionController{
         });
 
         return newAttraction;
-    }
+        }
+        async getById(id){
+            return  Attraction.findOne({
+                _id : id
+            });
+        };
 }
 module.exports = new AttractionController();

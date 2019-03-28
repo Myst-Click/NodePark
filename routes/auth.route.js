@@ -3,9 +3,9 @@ var express = require('express');
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcryptjs')
 var router = express.Router();
-const app = express();
+
 var bodyParser = require('body-parser');
-const mongoose = require('mongoose')
+
 router.use(bodyParser.urlencoded({ extended: true }));
 router.use(bodyParser.json());
 const User = require('../models').User
@@ -14,16 +14,16 @@ const UserController = require('../controllers/user.controller')
 
 // CREATES A NEW USER
 router.post('/signin', async(req, res)=>{
-    const result = await UserController.availableValues(req.body.name,req.body.email,req.body.password,req.body.level)
+    const result = await UserController.availableValues(req.body.name,req.body.email,req.body.password,req.body.level,req.body.pass)
     if(!result)return res.sendStatus(400).end();
     
     User.findOne({
-            email : mail
+            email : req.body.email
      },function(err,result){
         if(result) res.sendStatus(403).end();
         else{
             const cryptedPassword = bcrypt.hashSync(req.body.password,5);
-            const p = UserController.createUser(req.body.name,cryptedPassword,req.body.mail,req.body.level); 
+            const p = UserController.createUser(req.body.name,cryptedPassword,req.body.email,req.body.level,req.body.pass); 
               if(p === undefined) res.send(400).end();
               else res.sendStatus(201).end();
         }
