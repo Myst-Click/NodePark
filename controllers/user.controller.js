@@ -23,29 +23,7 @@ class UserController{
         return newUser;
     }
 
-    async availableValues(name,email,password,level,pass){
-    const typeName = typeof name;
-    const typePass = typeof password;
-    const typeMail = typeof email;
-    const typeLevel = typeof level;
-
-    if (typePass !== "string" 
-        ||typeName !== "string"
-        ||typeMail !== "string"
-        ||typeLevel !== "number") return false;
-
-    if(email === undefined 
-        || name === undefined 
-        || password === undefined 
-        || level === undefined 
-        || level > 2) return false;
-
-    if(pass != undefined){
-        if(pass != "journee" && pass !="week-end" && pass !="1daymonth" && pass != "annuel" && pass != "escape-game") return false;
-    }
-
-    return true;
-    }
+   
     async getById(id){
         return  User.findOne({
             _id : id
@@ -64,6 +42,7 @@ class UserController{
           return true;
           }
           else{
+            if(user.pass ==="escape_game")return false;
             if(user.pass === "journee"){
                     const date =  Date.now();
                     var dateNow = datetime.create(date)

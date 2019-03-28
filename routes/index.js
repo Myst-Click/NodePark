@@ -5,6 +5,7 @@ class RouterBuilder {
         app.use('/user',require('./user.route'));  
         app.use('/auth',require('./auth.route'));
         app.use('/attraction',require('./attraction.route'));  
+        app.use('/admin',require('./admin.route'));
     }
 }
 

@@ -10,11 +10,12 @@ router.use(bodyParser.urlencoded({ extended: true }));
 router.use(bodyParser.json());
 const User = require('../models').User
 const UserController = require('../controllers/user.controller')
+const verifyValueController = require('../controllers/verifyValue')
 
 
 // CREATES A NEW USER
 router.post('/signin', async(req, res)=>{
-    const result = await UserController.availableValues(req.body.name,req.body.email,req.body.password,req.body.level,req.body.pass)
+    const result = await verifyValueController.availableValueForUser(req.body.name,req.body.email,req.body.password,req.body.level,req.body.pass)
     if(!result)return res.sendStatus(400).end();
     
     User.findOne({

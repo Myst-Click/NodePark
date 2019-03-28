@@ -5,5 +5,6 @@ module.exports = {
     Attraction : require('./Attraction'),
     nameDay : require('./nameDay'),
     StatByDay : require('./StatByDay'),
-    StatByWeek : require('./StatByWeek')
+    StatByWeek : require('./StatByWeek'),
+    Parcours : require('./parcours')
 }

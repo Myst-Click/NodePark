@@ -8,6 +8,7 @@ const bcrypt = require('bcryptjs')
 const StatByDayController = require('../controllers/StatByDay.controller')
 const UserController = require('../controllers/user.controller');
 const AttractionController = require('../controllers/attraction.controller');
+const ParcoursController = require('../controllers/parcours.controller')
 
 router.use(bodyParser.urlencoded({ extended: true }));
 router.use(bodyParser.json());
@@ -43,6 +44,18 @@ router.get('/:iduser/attraction/:id',async(req,res)=>{
   else res.sendStatus(403);
     
 })
+//faire un parcours
+router.get('/:iduser/parcours/:id',async(req,res)=>{
+  const user = await UserController.getById(req.params.iduser);
+  const parcours = await ParcoursController.getById(req.params.id);
+  if(user.pass === "escape_game"){
+    const access = await UserController.isAccess(user);
+    if(!access) return res.sendStatus(401);
+    await ParcoursController.play(parcours);
+    return res.sendStatus(200)
+  }
+  else return res.sendStatus(401);
+})
 //changer ses attributs
 router.post('/:id/settings',async(req,res)=>{
   const user = await UserController.getById(req.params.id);
@@ -60,33 +73,7 @@ router.post('/:id/settings',async(req,res)=>{
   else{
     res.sendStatus(400);
   }
-})
-
-//changer les attributs d'un client
-router.post('/:id/settings/:idadmin',async(req,res)=>{
-  const user = await UserController.getById(req.params.id);
-  const admin = await UserController.getById(req.params.idadmin);
-  if(admin.level === 1){
-    if(user){
-      if(req.body.pass != undefined)user.pass = req.body.pass;
-      user.lastUsePass = "null";
-      user.save(function(err){
-        if(err) throw err;
-      });
-      res.sendStatus(202);
-    }
-    else{
-      res.sendStatus(400);
-    }
-  }
-  else{
-    res.sendStatus(401);
-  }
-})
-
-      
-         
-    
+})  
 
 
 

@@ -7,6 +7,7 @@ router.use(bodyParser.urlencoded({ extended: true }));
 router.use(bodyParser.json());
 const UserController = require('../controllers/user.controller')
 const AttractionController = require('../controllers/attraction.controller')
+const verifyValueController = require('../controllers/verifyValue')
 
 //verify user
 router.use(function(req, res, next) {
@@ -40,13 +41,21 @@ router.post('/new', async(req, res)=>{
     const acces_w_adultes = req.body.acces_w_adultes;
     const maintenance = req.body.maintenance;
    
-    const result = AttractionController.availableValue(name,description,images,type,duree,
+    const result = verifyValueController.availableValueForAttraction(name,description,images,type,duree,
                                                         capacite, horaire, acces_handicape,acces_w_adultes,maintenance)
     if(!result)return res.sendStatus(415).end();
-      
+    
+
     const p = await AttractionController.createAttraction(name,description,images,type,capacite,duree,horaire,acces_handicape,acces_w_adultes,maintenance);
     if(p === undefined) res.send(400).end();
-    else res.sendStatus(201).end();
+    else{
+      // p.images.data = fs.readFileSync(images);
+      // p.images.contentType = 'image/png';
+      // p.save(function(err,a){
+      //   if(err)throw err;
+      // })
+      res.sendStatus(201).end();
+    } 
   
    });
    //LISTER LES ATTRAACTIONS OUVERTES

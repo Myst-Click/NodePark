@@ -14,43 +14,7 @@ class AttractionController{
             return await Attraction.find({
                 maintenance : true
             });
-        }
-        availableValue(name,description,images,type,duree,capacite,horaire,
-                        acces_handicape,acces_w_adultes,maintenance){
-                            const typeName = typeof name;
-                            const typeDescription = typeof description;
-                            const typeImage = typeof images;
-                            const typeType = typeof type;
-                            const typeDuree = typeof duree;
-                            const typeCapacite = typeof capacite;
-                            const typeHoraire = typeof horaire;
-                            const typeHandicap = typeof acces_handicape;
-                            const typeAdultes = typeof acces_w_adultes;
-                            const typeMaintenance = typeof maintenance;
-
-                            if (typeName !== "string" 
-                            ||typeDescription !== "string"
-                            ||typeImage !== "string"
-                            ||typeType !== "string"
-                            ||typeDuree !== "string"
-                            ||typeCapacite !== "number"
-                            ||typeHoraire !== "string"
-                            ||typeHandicap !== "boolean"
-                            ||typeAdultes !== "boolean"
-                            ||typeMaintenance !== "boolean") return false;
-
-                            if(name === undefined 
-                                || description === undefined 
-                                || images === undefined 
-                                || type === undefined 
-                                || capacite === undefined 
-                                || horaire === undefined 
-                                || duree === undefined 
-                                || acces_handicape === undefined 
-                                || acces_w_adultes === undefined 
-                                || maintenance === undefined ) return false
-            return true;
-        }
+        }    
         async sendMaintenance(id){
            var attraction = await Attraction.findOne({
                 _id : id
