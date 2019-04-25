@@ -53,7 +53,9 @@ class AttractionController{
                  return p;
              }
          }
-        async createAttraction(name,description,image,type,capacite,duree,horaire,acces_handicape,acces_w_adultes,maintenance){
+        async createAttraction(name,description,image,type,capacite,duree,horaireDebut,horaireFin,acces_handicape,acces_w_adultes,maintenance){
+
+        
         var newAttraction = new Attraction({
             name:name,
             description: description,
@@ -61,7 +63,8 @@ class AttractionController{
             type: type,
             capacite: capacite,
             duree: duree,
-            horaire: horaire,
+            horaireDebut: horaireDebut,
+            horaireFin:horaireFin,
             acces_handicape: acces_handicape,
             acces_w_adultes: acces_w_adultes,
             maintenance: maintenance,
@@ -73,6 +76,29 @@ class AttractionController{
         });
 
         return newAttraction;
+        }
+        async isAccess(horaireDebut,horaireFin,horaireNow){
+           const hour = horaireNow.getHours();
+           const min = horaireNow.getMinutes();
+           const horaireDebutSplitted = horaireDebut.split('h');
+           const horaireFinSplitted = horaireFin.split('h');
+           if(hour < parseInt(horaireDebutSplitted[0],10)){
+                return false;
+           }
+           else{
+               if(hour === parseInt(horaireDebutSplitted[0],10)){
+                   if(min < parseInt(horaireDebutSplitted[1],10)) return false;
+                   else return true;
+               }
+               if(hour > parseInt(horaireDebutSplitted[0],10)){
+                    if(hour > parseInt(horaireFinSplitted[0],10)) return false;
+                    if(hour === parseInt(horaireFinSplitted[0],10)){
+                        if(min > parseInt(horaireFinSplitted[1],10)) return false;
+                        if(min === parseInt(horaireFinSplitted[1],10)) return false;
+                    }
+               }
+           }
+           return true;
         }
         async getById(id){
             return  Attraction.findOne({

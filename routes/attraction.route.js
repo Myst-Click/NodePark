@@ -15,15 +15,16 @@ router.use(function(req, res, next) {
     if (token) {
       jwt.verify(token, 'RESTFULAPIs', function(err, decoded) {       
           if (err) {
-          return res.json({ success: false, message: 'Failed to authenticate token.' });       }
+          return res.json({ success: false, message: 'Veuillez entrer un token valable' });       }
           else {
-          req.decoded = decoded;         next();
+          req.decoded = decoded;
+          next();
           }
       });
     } else {
       return res.status(403).send({ 
           success: false, 
-          message: 'No token provided.' 
+          message: 'Aucun token envoyé' 
       });
   
     }
@@ -36,25 +37,32 @@ router.post('/new', async(req, res)=>{
     const type = req.body.type;
     const duree = req.body.duree;
     const capacite = req.body.capacite;
-    const horaire = req.body.horaire;
+    const horaireDebut = req.body.horaireDebut;
+    const horaireFin = req.body.horaireFin
     const acces_handicape = req.body.acces_handicape;
     const acces_w_adultes = req.body.acces_w_adultes;
     const maintenance = req.body.maintenance;
    
     const result = verifyValueController.availableValueForAttraction(name,description,images,type,duree,
-                                                        capacite, horaire, acces_handicape,acces_w_adultes,maintenance)
-    if(!result)return res.sendStatus(415).end();
-    
+                                                        capacite, horaireDebut,horaireFin, acces_handicape,acces_w_adultes,maintenance)
+    if(!result){ res.sendStatus(415);
+                 res.json({
+                    success : false,
+                    message : "Erreur de syntaxe"
+                  });
+              }
 
-    const p = await AttractionController.createAttraction(name,description,images,type,capacite,duree,horaire,acces_handicape,acces_w_adultes,maintenance);
-    if(p === undefined) res.send(400).end();
+
+    const p = await AttractionController.createAttraction(name,description,images,type,capacite,duree,horaireDebut,horaireFin,acces_handicape,acces_w_adultes,maintenance);
+    if(p === undefined){
+      res.send(400);
+      res.json({
+        success : false,
+        message : "Impossible de creer cet utilisateur"
+      });
+    } 
     else{
-      // p.images.data = fs.readFileSync(images);
-      // p.images.contentType = 'image/png';
-      // p.save(function(err,a){
-      //   if(err)throw err;
-      // })
-      res.sendStatus(201).end();
+      res.sendStatus(201).end;
     } 
   
    });
@@ -68,6 +76,10 @@ router.post('/new', async(req, res)=>{
      }
      else{
        res.sendStatus(403);
+       res.json({
+        success : false,
+        message : "Erreur de listage"
+      });
      }
    })
    //Lister les attractions fermées
@@ -80,6 +92,10 @@ router.post('/new', async(req, res)=>{
     }
     else{
       res.sendStatus(403);
+      res.json({
+        success : false,
+        message : "Erreur de listage"
+      });
     }
   })
    //METTRE EN FONCTIONNEMENT
@@ -92,6 +108,10 @@ router.post('/new', async(req, res)=>{
      }
      else{
        res.sendStatus(403);
+       res.json({
+        success : false,
+        message : "Vous ne possédez les droits administrateur"
+      });
      }
    })
    //METTRE EN MAINTENANCE
@@ -104,6 +124,10 @@ router.post('/new', async(req, res)=>{
      }
      else{
        res.sendStatus(403);
+       res.json({
+        success : false,
+        message : "Vous ne possédez pas les droits administrateur"
+      });
      }
    })
 

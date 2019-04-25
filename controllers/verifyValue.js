@@ -3,15 +3,16 @@ const Attraction = require('../models').Attraction
 const Parcours = require('../models').Parcours
 class verifyValueController{
 
-    availableValueForAttraction(name,description,images,type,duree,capacite,horaire,
-        acces_handicape,acces_w_adultes,maintenance){
+    availableValueForAttraction(name,description,images,type,duree,capacite,horaireDebut,
+        horaireFin,acces_handicape,acces_w_adultes,maintenance){
             const typeName = typeof name;
             const typeDescription = typeof description;
             const typeImage = typeof images;
             const typeType = typeof type;
             const typeDuree = typeof duree;
             const typeCapacite = typeof capacite;
-            const typeHoraire = typeof horaire;
+            const typeHoraireDebut = typeof horaireDebut;
+            const typeHoraireFin = typeof horaireFin;
             const typeHandicap = typeof acces_handicape;
             const typeAdultes = typeof acces_w_adultes;
             const typeMaintenance = typeof maintenance;
@@ -22,17 +23,22 @@ class verifyValueController{
             ||typeType !== "string"
             ||typeDuree !== "string"
             ||typeCapacite !== "number"
-            ||typeHoraire !== "string"
+            ||typeHoraireDebut !== "string"
+            ||typeHoraireFin !== "string"
             ||typeHandicap !== "boolean"
             ||typeAdultes !== "boolean"
             ||typeMaintenance !== "boolean") return false;
+
+            if(horaireDebut[2] != 'h')return false;
+            if(horaireFin[2] != 'h')return false;
 
             if(name === undefined 
                 || description === undefined 
                 || images === undefined 
                 || type === undefined 
                 || capacite === undefined 
-                || horaire === undefined 
+                || horaireDebut === undefined 
+                || horaireFin === undefined 
                 || duree === undefined 
                 || acces_handicape === undefined 
                 || acces_w_adultes === undefined 

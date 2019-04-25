@@ -5,6 +5,7 @@ var router = express.Router();
 var bodyParser = require('body-parser');
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcryptjs')
+const datetime = require('node-datetime')
 const StatByDayController = require('../controllers/StatByDay.controller')
 const UserController = require('../controllers/user.controller');
 const AttractionController = require('../controllers/attraction.controller');
@@ -35,13 +36,27 @@ router.use(function(req, res, next) {
 router.get('/:iduser/attraction/:id',async(req,res)=>{
   const user = await UserController.getById(req.params.iduser);
   const attraction = await AttractionController.getById(req.params.id);
-  const result = await UserController.isAccess(user);
+  const horaireDebut = attraction.horaireDebut;
+  const horaireFin = attraction.horaireFin;
+  const horaireNow = new Date();
+  const availableAttraction = await AttractionController.isAccess(horaireDebut,horaireFin,horaireNow);
+  if(availableAttraction){
+    const result = await UserController.isAccess(user);
+  
  
-  if(result){
-    await StatByDayController.addStat(attraction.name);
-    res.sendStatus(202);
-  } 
-  else res.sendStatus(403);
+    if(result){
+      await StatByDayController.addStat(attraction.name);
+      res.sendStatus(202);
+    } 
+    else res.json({
+      success : false,
+      message : "Votre pass ne vous permet pas d'accéder à cette attraction"
+    });
+  }
+  else res.json({
+    success : false,
+    message : "L'attraction demandée n'est pas accessible"
+  })
     
 })
 //faire un parcours
@@ -50,11 +65,17 @@ router.get('/:iduser/parcours/:id',async(req,res)=>{
   const parcours = await ParcoursController.getById(req.params.id);
   if(user.pass === "escape_game"){
     const access = await UserController.isAccess(user);
-    if(!access) return res.sendStatus(401);
+    if(!access) return res.json({
+                        success : false,
+                        message : "Votre pass ne vous permet pas d'accéder à ce parcours"
+                        });
     await ParcoursController.play(parcours);
     return res.sendStatus(200)
   }
-  else return res.sendStatus(401);
+  else return res.json({
+              success : false,
+              message : "Votre pass ne vous permet pas d'accéder à ce parcours"
+              });
 })
 //changer ses attributs
 router.post('/:id/settings',async(req,res)=>{
@@ -71,7 +92,10 @@ router.post('/:id/settings',async(req,res)=>{
     res.sendStatus(202);
   }
   else{
-    res.sendStatus(400);
+    res.json({
+      success : false,
+      message : "Email et/ou mot de passe incorrect"
+      });
   }
 })  
 

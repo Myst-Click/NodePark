@@ -23,9 +23,12 @@ module.exports = mongoose.model('Attraction', new Schema({
   duree:{ type : String,
       required : true,
         },
-  horaire:{ type : String,
+  horaireDebut:{ type : String,
       required : true,
         },
+  horaireFin:{ type : String,
+      required :true
+  },
   acces_handicape:{ type : Boolean,
       required : true,
         },
